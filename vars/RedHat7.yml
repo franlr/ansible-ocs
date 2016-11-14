@@ -2,6 +2,8 @@
 
 epel_repo: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
+remi_repo: http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+
 ocs_pkgreqs:
   - "@development-tools"
   - perl-CPAN
