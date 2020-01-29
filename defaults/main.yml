@@ -2,10 +2,10 @@
 # defaults file for ocs
 
 ocs_name: "Ocsinventory-Unix-Agent"
-ocs_agent_version: "2.1.1"
+ocs_agent_version: "2.6.0"
 ocs_archive: "{{ ocs_name }}-{{ ocs_agent_version }}"
 ocs_pkg: "{{ ocs_archive }}.tar.gz"
-ocs_down_url: "https://github.com/OCSInventory-NG/UnixAgent/releases/download/{{ ocs_agent_version }}/{{ ocs_pkg }}"
+ocs_down_url: "https://github.com/OCSInventory-NG/UnixAgent/releases/download/v{{ ocs_agent_version }}/{{ ocs_pkg }}"
 ocs_down_dir: /tmp
 ocs_server: ocsinventory-server.domain.name
 ocs_basedir: /var/lib/ocsinventory-agent

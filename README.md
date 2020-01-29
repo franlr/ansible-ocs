@@ -10,7 +10,7 @@ This role only works with the ocsinventory-agent 2.1 or later to let the agent b
 Tested on:
 - Ubuntu 14.04 and 16.04
 - CentOS 6 and 7
-- Debian 7 and 8
+- Debian 7, 8 and 9
 
 Requirements
 ------------
@@ -27,10 +27,10 @@ Available variables are listed below, along with default values (see `defaults/m
 ```
 ---
 ocs_name: "Ocsinventory-Unix-Agent"
-ocs_agent_version: "2.1.1"
+ocs_agent_version: "2.6.0"
 ocs_archive: "{{ ocs_name }}-{{ ocs_agent_version }}"
 ocs_pkg: "{{ ocs_archive }}.tar.gz"
-ocs_down_url: "https://github.com/OCSInventory-NG/UnixAgent/releases/download/{{ ocs_agent_version }}/{{ ocs_pkg }}"
+ocs_down_url: "https://github.com/OCSInventory-NG/UnixAgent/releases/download/v{{ ocs_agent_version }}/{{ ocs_pkg }}"
 ocs_down_dir: /tmp
 ocs_server: ocsinventory-server.domain.name
 ocs_basedir: /var/lib/ocsinventory-agent
@@ -56,7 +56,7 @@ How to use this role:
 ---
 - hosts: all
   gather_facts: true
-  sudo: yes
+  become: yes
   roles:
     - ocs_agent
   vars:
@@ -76,3 +76,4 @@ Author Information
 This role was created in 2015 by [FranLR](https://github.com/franlr/)
 
 Updated by paulbsd
+Updated by cgregoirovh
