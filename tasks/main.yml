@@ -19,6 +19,7 @@
   command: "/usr/bin/perl -MCPAN -e 'install Digest::MD5'"
   environment:
     PERL_MM_USE_DEFAULT: 1
+  when: ansible_os_family == 'RedHat'
 
 - name: Download tarball
   get_url: >
@@ -31,7 +32,7 @@
 - name: Download status
   debug:
     msg="ocsinventory agent was downloaded"
-  when: get_ocsinventory_agent|changed
+  when: get_ocsinventory_agent.changed
 
 - name: Uncompress the tarball
   unarchive: >
@@ -65,7 +66,7 @@
 
 - name: Fetch SSL Certificate
   local_action: shell echo -n | openssl s_client -connect {{ ocs_server }}:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /tmp/{{ ocs_server }}-cacert.pem
-  sudo: no
+  become: no
   when: ocs_ssl == true
 
 - name: Move SSL Certificate to ocs_configdir
