@@ -18,9 +18,6 @@ before_install:
 install:
   - sudo -H python3 -m pip install --upgrade pip setuptools wheel
   - sudo -H python3 -m pip install --upgrade ansible
-  - mkdir roles/
-  - ansible-galaxy install -p roles -r requirements.yml
-
   # Add ansible.cfg to pick up roles path.
   - "printf '[defaults]\ngathering = smart\nroles_path = roles/' > ansible.cfg"
 
