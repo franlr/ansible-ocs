@@ -1,0 +1,7 @@
+---
+- name: test OCS Inventory Agent role
+  hosts: all
+  roles:
+    - role: '../..'
+
+

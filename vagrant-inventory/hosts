@@ -1,0 +1,10 @@
+# hosts en Vagrantfile
+
+testvm ansible_host=192.168.33.11 ansible_user=vagrant ansible_password=vagrant ansible_sudo_password=vagrant
+
+[python3]
+devopsws
+
+[python3:vars]
+ansible_python_interpreter=/usr/bin/python3
+
