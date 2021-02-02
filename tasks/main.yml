@@ -15,11 +15,21 @@
 - include: RedHat.yml
   when: ansible_os_family == 'RedHat'
 
+- name: Installed version of Agent
+  shell: |
+    /usr/local/bin/ocsinventory-agent --version 2>/dev/null | sed -e 's/.*(\(.*\))/\1/'
+
+  register: reg_ocs_installed_version
+  changed_when: false
+
+- set_fact:
+    ocs_installed_version: "{{ reg_ocs_installed_version.stdout }}"
+
 - name: Initialize CPAN installation installs Digest::MD5 using CPAN
   command: "/usr/bin/perl -MCPAN -e 'install Digest::MD5'"
   environment:
     PERL_MM_USE_DEFAULT: 1
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'RedHat' and ocs_agent_version != ocs_installed_version
 
 - name: Download tarball
   get_url: >
@@ -28,6 +38,7 @@
     force=no
     validate_certs=no
   register: get_ocsinventory_agent
+  when: ocs_agent_version != ocs_installed_version
 
 - name: Download status
   debug:
@@ -42,6 +53,7 @@
     mode=0755
     owner=root
     group=root
+  when: get_ocsinventory_agent.changed
 
 - name: Configuration directory
   file: >
@@ -67,13 +79,13 @@
 - name: Fetch SSL Certificate
   local_action: shell echo -n | openssl s_client -connect {{ ocs_server }}:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /tmp/{{ ocs_server }}-cacert.pem
   become: no
-  when: ocs_ssl == true
+  when: ocs_ssl == true and ocs_agent_version != ocs_installed_version
 
 - name: Move SSL Certificate to ocs_configdir
   copy: >
    src=/tmp/{{ ocs_server }}-cacert.pem
    dest={{ ocs_configdir }}/cacert.pem
-  when: ocs_ssl == true
+  when: ocs_ssl == true and ocs_agent_version != ocs_installed_version
 
 - name: Silent install ocs agent on target dir using COMMAND module
   command: "chdir=/opt/{{ ocs_archive }} {{ item }}"
@@ -91,3 +103,4 @@
     - Remove OCS from opt
     - Remove OCS from tmp
     - Remote OCS SSL cert
+  when: ocs_agent_version != ocs_installed_version
