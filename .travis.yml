@@ -5,6 +5,11 @@ arch: amd64
 dist: focal
 language: minimal
 
+branches:
+  only:
+    - master
+    - cb-devel
+
 before_install:
   - sudo rm -f /etc/apt/sources.list.d/pgdg.list # https://travis-ci.community/t/sometimes-build-fails-when-apt-is-updating-postgresql-apt-repository/4872
   - sudo apt-get update -qq
