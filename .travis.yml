@@ -1,0 +1,32 @@
+---
+#virt: lxd
+os: linux
+arch: amd64
+dist: focal
+language: minimal
+
+before_install:
+  - sudo rm -f /etc/apt/sources.list.d/pgdg.list # https://travis-ci.community/t/sometimes-build-fails-when-apt-is-updating-postgresql-apt-repository/4872
+  - sudo apt-get update -qq
+  - sudo apt-get install -y python3-pip
+
+install:
+  - sudo -H python3 -m pip install --upgrade pip setuptools wheel
+  - sudo -H python3 -m pip install --upgrade ansible
+  - mkdir roles/
+  - ansible-galaxy install -p roles -r requirements.yml
+
+  # Add ansible.cfg to pick up roles path.
+  - "printf '[defaults]\ngathering = smart\nroles_path = roles/' > ansible.cfg"
+
+script:
+  # Check the role/playbook's syntax.
+  - "ansible-playbook -vv -i tests/inventory tests/test.yml --syntax-check"
+  # Run the role/playbook with ansible-playbook.
+  - "travis_wait ansible-playbook -i tests/inventory tests/test.yml --connection=local --extra-vars @tests/hosts-vars.yml"
+  # Run the role/playbook again, checking to make sure it's idempotent.
+  - >
+    ansible-playbook -i tests/inventory tests/test.yml --connection=local --extra-vars @tests/hosts-vars.yml
+    | grep -q 'changed=3.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
