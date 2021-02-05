@@ -1,26 +1,6 @@
-# hosts
-#
-# time ansible-playbook -vv -i hosts site.yml --extra-vars "@hosts-vars.yml"
+# travis inventory
 
 localhost ansible_connection=local
-
-[tinyproxy]
-localhost
-
-[servidor]
-localhost
-
-[escritorio]
-localhost
-
-[devops]
-localhost
-
-[utn]
-localhost
-
-[ocsinventoryagent]
-localhost  # la mayoria de los escritorios no requieren OCS Inventory Agent
 
 [python3]
 localhost
