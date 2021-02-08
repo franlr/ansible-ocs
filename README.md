@@ -2,7 +2,7 @@ ansible-ocs
 =========
 
 [![Ansible Galaxy](https://img.shields.io/badge/galaxy-franlr--ocs-blue.svg)](https://galaxy.ansible.com/list#/roles/4468)
-[![Build Status](https://travis-ci.com/CesarBallardini/Ansible-Role-For-UnixAgent.svg?branch=cb-devel)](https://travis-ci.com/CesarBallardini/Ansible-Role-For-UnixAgent)
+[![Build Status](https://travis-ci.com/OCSInventory-NG/Ansible-Role-For-UnixAgent.svg?branch=master)](https://travis-ci.com/OCSInventory-NG/Ansible-Role-For-UnixAgent)
 
 
 An Ansible role for installing ocsinventory-agent.
