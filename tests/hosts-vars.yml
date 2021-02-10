@@ -1,0 +1,7 @@
+---
+# Config de OCS-Inventory: if ocs_server is empty string, it will not be installed
+ocs_server: 'ocs.example.com'
+ocs_tag: 'mytag'
+ocs_agent_version: '2.8.1'
+ocs_ssl: true
+
