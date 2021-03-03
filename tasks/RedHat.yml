@@ -1,57 +1,17 @@
 ---
-
-- name: Set RedHat major version
-  set_fact: >
-    dist="rhel6"
-  when: (ansible_distribution == "Red Hat Enterprise Linux" or ansible_distribution == "CentOS") and
-         ansible_distribution_major_version == "6"
-
-- name: Set RedHat major version
-  set_fact: >
-    dist="rhel7"
-  when: (ansible_distribution == "Red Hat Enterprise Linux" or ansible_distribution == "CentOS") and
-         ansible_distribution_major_version == "7"
-
-- name: Get epel rpm from internet
-  get_url: >
-    url="{{ epel_repo }}"
-    dest="/tmp/"
-
-- name: Get remi rpm from internet
-  get_url: >
-    url="{{ remi_repo }}"
-    dest="/tmp/"
-
-- name: debug
-  debug: msg={{ epel_repo }}
-  
-- name: debug
-  debug: msg={{ remi_repo }}
-
-- name: Install epel rpm from a local file
-  yum: name=/tmp/epel-release-latest-6.noarch.rpm state=present
-  when: dist == "rhel6"
-
-- name: Install epel rpm from a local file
-  yum: name=/tmp/epel-release-latest-7.noarch.rpm state=present
-  when: dist == "rhel7"
-
-- name: Install remi rpm from a local file
-  yum: name=/tmp/remi-release-6.rpm state=present
-  when: dist == "rhel6"
-
-- name: Install remi rpm from a local file
-  yum: name=/tmp/remi-release-7.rpm state=present
-  when: dist == "rhel7"
+- name: Install EPEL repository
+  package:
+      name: epel-release
+      state: present
 
 - name: Install yum-utils to be able to enable remi programmatically
-  yum: name="yum-utils" state=installed
-
-- name: Enable remi repository
-  command: "yum-config-manager --enable remi"
+  package:
+    name: yum-utils
+    state: present
 
 - name: Install the required packages in RedHat derivatives
-  yum: name="{{ item }}" state=installed
-  with_items: "{{ ocs_pkgreqs }}"
+  package:
+    name: "{{ ocs_pkgreqs }}"
+    state: installed
   tags:
     - ocs_pkgreqs

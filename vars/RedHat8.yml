@@ -1,4 +1,3 @@
----
 ocs_pkgreqs:
   - "@Development Tools"
   - perl-CPAN
