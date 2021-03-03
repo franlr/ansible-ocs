@@ -4,11 +4,6 @@
       name: epel-release
       state: present
 
-- name: Install yum-utils to be able to enable remi programmatically
-  package:
-    name: yum-utils
-    state: present
-
 - name: Install the required packages in RedHat derivatives
   package:
     name: "{{ ocs_pkgreqs }}"

@@ -1,8 +1,8 @@
 ---
 - name: Install the required packages
-  apt: 
-  name: "{{ ocs_pkgreqs }}" 
-  state: present 
-  update_cache: yes
+  apt:
+    name: "{{ ocs_pkgreqs }}"
+    state: present
+    update_cache: yes
   tags:
     - ocs_pkgreqs
