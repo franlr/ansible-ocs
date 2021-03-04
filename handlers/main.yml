@@ -1,17 +1,17 @@
 ---
 # handlers file for ocs
 - name: Remove OCS from opt
-  file: >
-   path=/opt/{{ ocs_archive }}
-   state=absent
+  file:
+   path: /opt/{{ ocs_archive }}
+   state: absent
 
 - name: Remove OCS from tmp
-  file: >
-   path={{ ocs_down_dir }}/{{ ocs_pkg }}
-   state=absent
+  file:
+   path: "{{ ocs_down_dir }}/{{ ocs_pkg }}"
+   state: absent
 
 - name: Remote OCS SSL cert
-  file: >
-    path=/tmp/{{ ocs_server }}-cacert.pem
-    state=absent
+  file:
+    path: "/tmp/{{ ocs_server }}-cacert.pem"
+    state: absent
   when: ocs_ssl == true
