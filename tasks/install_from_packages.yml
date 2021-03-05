@@ -1,0 +1,7 @@
+---
+- include: "{{ ansible_os_family }}_from_packages.yml"
+
+- name: Install ocsinventory-agent
+  package:
+    name: ocsinventory-agent
+    state: present

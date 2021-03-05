@@ -1,6 +1,18 @@
 ---
 # defaults file for ocs
+install_from_packages: true
+install_from_source: false
 
+# joined vars
+
+# from packages
+ocs_apt_release: stable
+ocs_apt_arch: amd64
+ocs_apt_repository: "deb [arch={{ ocs_apt_arch }}] http://deb.ocsinventory-ng.org/{{ ansible_distribution | lower }} {{ ocs_apt_release }} main"
+ocs_apt_gpg_key: https://deb.ocsinventory-ng.org/pubkey.gpg
+ocs_apt_key_fingerprint: 799E0F4D68A14A00FD3ACE2D8D1DA07AF0AF3862
+
+# from source
 ocs_name: "Ocsinventory-Unix-Agent"
 ocs_agent_version: "2.6.0"
 ocs_archive: "{{ ocs_name }}-{{ ocs_agent_version }}"

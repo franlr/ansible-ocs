@@ -1,0 +1,19 @@
+---
+- name: Ensure dependencies are installed.
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg2
+    state: present
+
+- name: Add OCS Inventory APT key
+  apt_key:
+    url: "{{ ocs_apt_gpg_key }}"
+    id: "{{ ocs_apt_key_fingerprint }}"
+    state: present
+  register: repository_key
+
+- name: Add OCS Repository
+  apt_repository:
+    repo: "{{ ocs_apt_repository }}"
