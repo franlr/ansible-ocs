@@ -1,5 +1,11 @@
 ---
 # tasks file for ocs
+- name: Update cache for Debian-based distros
+  apt:
+    update_cache: true
+  when: ansible_facts['os_family'] == 'Debian'
+  changed_when: false
+
 - name: HTTP URL
   set_fact:
     ocs_url: "http://{{ ocs_server }}"
@@ -27,7 +33,6 @@
   copy:
    src: "/tmp/{{ ocs_server }}-cacert.pem"
    dest: "{{ ocs_configdir }}/cacert.pem"
-   remote_src: true
   when: ocs_ssl == true
 
 - name: Include tasks for installation from source

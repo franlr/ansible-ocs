@@ -1,7 +1,10 @@
 ---
-- name: Add OCS Inventory
-  yum_repository:
-    name: ocsinventory
-    description: OCS Inventory Repository
-    baseurl: "{{ ocs_yum_repository }}"
-    enabled: true
+- name: Install OCS repository
+  yum:
+    name: "https://rpm.ocsinventory-ng.org\
+       /ocsinventory-release-latest.el{{ ansible_distribution_major_version }}\
+       .ocs.noarch.rpm"
+    state: present
+    # TODO: this isn't best practice, but I didn't find any GPG file for
+    # RHEL family in the repo
+    disable_gpg_check: true
