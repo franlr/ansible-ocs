@@ -1,1 +1,7 @@
 ---
+- name: Add OCS Inventory
+  yum_repository:
+    name: ocsinventory
+    description: OCS Inventory Repository
+    baseurl: "{{ ocs_yum_repository }}"
+    enabled: true

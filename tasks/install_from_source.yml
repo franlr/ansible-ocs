@@ -47,37 +47,9 @@
     group: root
   when: get_ocsinventory_agent.changed
 
-- name: Configuration directory
-  file:
-   path: "{{ ocs_configdir }}"
-   state: directory
-   mode: 755
-
-- name: HTTP URL
-  set_fact:
-    ocs_url: "http://{{ ocs_server }}"
-  when: ocs_ssl == false
-
-- name: HTTPS URL
-  set_fact:
-   ocs_url: "https://{{ ocs_server }}"
-   ocs_ca: "--ca={{ ocs_configdir }}/cacert.pem"
-  when: ocs_ssl == true
-
 - name: Set OCS installer options
   set_fact:
-    ocs_final_options: "{{ ocs_options }} {{ ocs_ca }}"
-
-- name: Fetch SSL Certificate
-  local_action: "shell echo -n | openssl s_client -connect {{ ocs_server }}:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /tmp/{{ ocs_server }}-cacert.pem"
-  become: no
-  when: ocs_ssl == true and ocs_agent_version != ocs_installed_version
-
-- name: Move SSL Certificate to ocs_configdir
-  copy:
-   src: "/tmp/{{ ocs_server }}-cacert.pem"
-   dest: "{{ ocs_configdir }}/cacert.pem"
-  when: ocs_ssl == true and ocs_agent_version != ocs_installed_version
+    ocs_final_options: "{{ ocs_options }} --ca={{ ocs_ca }}"
 
 - name: Silent install ocs agent on target dir using COMMAND module
   command: "chdir=/opt/{{ ocs_archive }} {{ item }}"

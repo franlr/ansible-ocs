@@ -1,9 +1,38 @@
 ---
 # tasks file for ocs
+- name: HTTP URL
+  set_fact:
+    ocs_url: "http://{{ ocs_server }}"
+  when: ocs_ssl == false
+
+- name: HTTPS URL
+  set_fact:
+   ocs_url: "https://{{ ocs_server }}"
+   ocs_ca: "{{ ocs_configdir }}/cacert.pem"
+  when: ocs_ssl == true
+
+- name: Fetch SSL Certificate
+  shell: "echo -n | openssl s_client -connect {{ ocs_server }}:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /tmp/{{ ocs_server }}-cacert.pem"
+  when: ocs_ssl == true
+  changed_when: false
+
+- name: Make sure the configdir is present
+  file:
+   path: "{{ ocs_configdir }}"
+   state: directory
+   mode: 755
+
+- name: Move SSL Certificate to ocs_configdir
+  copy:
+   src: "/tmp/{{ ocs_server }}-cacert.pem"
+   dest: "{{ ocs_configdir }}/cacert.pem"
+   remote_src: true
+  when: ocs_ssl == true
+
 - name: Include tasks for installation from source
   include_tasks: install_from_source.yml
-  when: install_from_source|default(false) and not install_from_packages
+  when: install_from_source|default(false)
 
 - name: Include tasks for installation from packages
   include_tasks: install_from_packages.yml
-  when: install_from_packages|default(true) and not install_from_source
+  when: install_from_packages|default(false)
