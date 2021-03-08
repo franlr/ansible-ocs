@@ -15,6 +15,7 @@
   local_action: "shell echo -n | openssl s_client -connect {{ ocs_server }}:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /tmp/{{ ocs_server }}-cacert.pem"
   become: no
   when: ocs_ssl == true
+  changed_when: false
 
 - name: Make sure the configdir is present
   file:
