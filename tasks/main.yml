@@ -27,7 +27,6 @@
   file:
    path: "{{ ocs_configdir }}"
    state: directory
-   mode: 755
 
 - name: Move SSL Certificate to ocs_configdir
   copy:
