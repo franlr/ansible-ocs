@@ -1,0 +1,70 @@
+---
+- name: Add the OS specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+  when: ansible_os_family == 'Debian'
+
+- name: Add the OS specific variables
+  include_vars: "{{ ansible_os_family }}{{ ansible_distribution_major_version }}.yml"
+  when: ansible_os_family == 'RedHat'
+
+- include: "{{ ansible_os_family }}_from_source.yml"
+
+- name: Installed version of Agent
+  shell: /usr/local/bin/ocsinventory-agent --version 2>/dev/null | sed -e 's/.*(\(.*\))/\1/'
+  register: reg_ocs_installed_version
+  changed_when: false
+
+- set_fact:
+    ocs_installed_version: "{{ reg_ocs_installed_version.stdout }}"
+
+- name: Initialize CPAN installation installs Digest::MD5 using CPAN
+  command: "/usr/bin/perl -MCPAN -e 'install Digest::MD5'"
+  environment:
+    PERL_MM_USE_DEFAULT: 1
+  when: ansible_os_family == 'RedHat' and ocs_agent_version != ocs_installed_version
+
+- name: Download tarball
+  get_url:
+    url: "{{ ocs_down_url }}"
+    dest: "{{ ocs_down_dir }}"
+    force: no
+    validate_certs: no
+  register: get_ocsinventory_agent
+  when: ocs_agent_version != ocs_installed_version
+
+- name: Download status
+  debug:
+    msg: "ocsinventory agent was downloaded"
+  when: get_ocsinventory_agent.changed
+
+- name: Uncompress the tarball
+  unarchive:
+    src: "{{ ocs_down_dir }}/{{ ocs_pkg }}"
+    dest: /opt/
+    copy: no
+    mode: 0755
+    owner: root
+    group: root
+  when: get_ocsinventory_agent.changed
+
+- name: Set OCS installer options
+  set_fact:
+    ocs_final_options: "{{ ocs_options }} --ca={{ ocs_ca }}"
+
+- name: Silent install ocs agent on target dir using COMMAND module
+  command: "chdir=/opt/{{ ocs_archive }} {{ item }}"
+  with_items:
+    - "perl Makefile.PL"
+    - "make"
+    - "make install clean"
+    - "perl postinst.pl --nowizard --server={{ ocs_url }} --basevardir={{ ocs_basedir }} --configdir={{ ocs_configdir }} --tag={{ ocs_tag }} --logfile={{ ocs_logfile }} {{ ocs_final_options }}"
+  environment:
+    PATH: "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/lib:/usr/local/lib:/opt:{{ ansible_env.PATH }}"
+    PERL_AUTOINSTALL: 1
+  tags:
+    - ocs_install_command
+  notify:
+    - Remove OCS from opt
+    - Remove OCS from tmp
+    - Remote OCS SSL cert
+  when: ocs_agent_version != ocs_installed_version

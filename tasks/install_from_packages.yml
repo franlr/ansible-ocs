@@ -1,0 +1,19 @@
+---
+- name: Include distro-specific tasks for installing from packages
+  include_tasks: "{{ ansible_os_family }}_from_packages.yml"
+  when: use_ocs_repo|default(true)
+
+- name: Install ocsinventory-agent
+  package:
+    name: ocsinventory-agent
+    state: present
+
+- name: Template the configuration file
+  template:
+    src: templates/ocsinventory-agent.cfg
+    dest: "{{ ocs_configdir }}/ocsinventory-agent.cfg"
+
+- name: Run ocsinventory-agent
+  command:
+    cmd: ocsinventory-agent
+  changed_when: false

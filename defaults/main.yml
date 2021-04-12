@@ -1,17 +1,36 @@
 ---
-# defaults file for ocs
+### DEFINE HOW THE AGENT WILL BE DEFINED
+# install_from_packages: true
+# install_from_source: false
 
+# when installing from packages, it is possible to either use the official
+# repos or use the packages provided by the distribution
+use_ocs_repo: true
+
+# GLOBAL Variables
+ocs_server: ocsinventory-server.domain.name
+ocs_basedir: /var/lib/ocsinventory-agent
+ocs_configdir: /etc/ocsinventory
+ocs_logfile: /var/log/ocsinventory-agent.log
+ocs_ssl: false
+ocs_ca:
+ocs_tag: ""
+
+# from packages
+ocs_apt_release: stable
+ocs_apt_arch: amd64
+ocs_apt_repository: "deb [arch={{ ocs_apt_arch }}] http://deb.ocsinventory-ng.org/{{ ansible_distribution | lower }} {{ ocs_apt_release }} main"
+ocs_apt_gpg_key: https://deb.ocsinventory-ng.org/pubkey.gpg
+ocs_apt_key_fingerprint: 799E0F4D68A14A00FD3ACE2D8D1DA07AF0AF3862
+ocs_yum_repository: "https://rpm.ocsinventory-ng.org/ocsinventory-release-latest.el{{ ansible_distribution_major_version }}.ocs.noarch.rpm"
+ocs_nosoftware: 0
+ocs_no_ssl_verify: false
+
+# from source
 ocs_name: "Ocsinventory-Unix-Agent"
 ocs_agent_version: "2.6.0"
 ocs_archive: "{{ ocs_name }}-{{ ocs_agent_version }}"
 ocs_pkg: "{{ ocs_archive }}.tar.gz"
 ocs_down_url: "https://github.com/OCSInventory-NG/UnixAgent/releases/download/v{{ ocs_agent_version }}/{{ ocs_pkg }}"
 ocs_down_dir: /tmp
-ocs_server: ocsinventory-server.domain.name
-ocs_basedir: /var/lib/ocsinventory-agent
-ocs_configdir: /etc/ocsinventory
-ocs_tag: srvtype
-ocs_logfile: /var/log/ocsinventory-agent.log
 ocs_options: --crontab --remove-old-linux-agent --debug --download --snmp --now
-ocs_ssl: false
-ocs_ca:
