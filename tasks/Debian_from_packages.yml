@@ -17,3 +17,23 @@
 - name: Add OCS Repository
   apt_repository:
     repo: "{{ ocs_apt_repository }}"
+
+- name: Download GPG key from OCS Inventory and add to keyring
+  when: ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['lsb']['major_release'] >= '22'
+  ansible.builtin.shell:
+    cmd: curl -fsSL http://deb.ocsinventory-ng.org/pubkey.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/ocs-archive-keyring.gpg
+  args:
+    creates: /etc/apt/trusted.gpg.d/ocs-archive-keyring.gpg
+
+- name: Add OCS Inventory repository for Ubuntu
+  when: ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['lsb']['major_release'] >= '22'
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/ocs-archive-keyring.gpg] http://deb.ocsinventory-ng.org/ubuntu/ {{ ansible_facts['distribution_release'] }} main"
+    state: present
+    filename: ocsinventory
+
+- name: Update package list
+  when: ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['lsb']['major_release'] >= '22'
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600  # Cache valid for 1 hour, optional     
